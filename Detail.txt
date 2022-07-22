@@ -1,0 +1,61 @@
+
+First, Put this Command  -     npm install
+Second, Put this Command  -     npm start
+
+*********************  Register User ********************
+
+Method - POST
+
+ url - http://localhost:8000/user/add
+    
+--------------- body ----------------
+{
+    "username":"shivam1",
+    "email":"shivampatel41015@gmail.com",
+    "password":"123"
+}
+
+
+*********************  Login User ********************
+
+Method - POST
+
+ url - http://localhost:8000/user/login
+    
+--------------- body ----------------
+{
+    "email":"shivampatel41015@gmail.com",
+    "password":"123"
+}
+
+*********************  Add Product ********************
+
+Method - POST
+
+ url - http://localhost:8000/product/add
+
+ Headers - 
+
+token - login token
+    
+--------------- body ----------------
+{
+    "title":"Apple iPhone 12 (128GB ROM, 4GB RAM, MJNP3HN/A, Purple)",
+    "description":"15.49 cm (6.5') Super Retina XDR 4GB RAM | 128GB ROM | iOS 14 Hexa-Core A14 Bionic Chip Processor R: 12MP + 12MP | F: 12MP 2815 mAh Lithium Ion Battery Barometer | Proximity Sensor",
+    "color":"red",
+    "size":"6.4 inch",
+    "price": 50500
+}
+
+*********************  Get All Product ********************
+
+Method - GET
+
+ url - http://localhost:8000/product/all
+
+Headers - 
+
+token - login token
+
+--------------- body ----------------
+{}
