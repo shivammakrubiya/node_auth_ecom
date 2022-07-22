@@ -59,3 +59,29 @@ token - login token
 
 --------------- body ----------------
 {}
+
+*********************  Delete Product by Id ********************
+
+Method - DELETE
+
+ url - http://localhost:8000/product/delete?id=62da70963f4a85db8b5ac553
+
+Headers - 
+
+token - login token
+
+--------------- body ----------------
+{}
+
+*********************  Delete All Product  ********************
+
+Method - DELETE
+
+ url - http://localhost:8000/product/delete
+
+Headers - 
+
+token - login token
+
+--------------- body ----------------
+{}

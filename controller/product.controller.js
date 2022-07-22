@@ -102,7 +102,7 @@ module.exports = {
       if (!isUser) {
         return res.status(401).json({
           success: false,
-          message: "You are not authorized to add product",
+          message: "You are not authorized to get All products",
         });
       }
 
@@ -124,6 +124,7 @@ module.exports = {
         console.log("sizes", size);
 
         payload.push({
+          id: element._id,
           title: element.title,
           description: element.description,
           images: element.images,
@@ -139,6 +140,49 @@ module.exports = {
       });
     } catch (error) {
       res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  },
+  deleteProduct: async (req, res) => {
+    try {
+      const isUser = req.user;
+
+      if (!isUser) {
+        return res.status(401).json({
+          success: false,
+          message: "You are not authorized to Delete product",
+        });
+      }
+
+      const { id } = req.query;
+
+      if (!id) {
+        const deleteAll = await Product.deleteMany({});
+        await Color.deleteMany({});
+        await Size.deleteMany({});
+        if (deleteAll) {
+          return res.status(200).json({
+            success: true,
+            message: "All Products deleted successfully",
+          });
+        }
+      }
+
+      const product = await Product.findByIdAndDelete({ _id: id });
+
+      if (product) {
+        await Color.deleteMany({ productId: id });
+        await Size.deleteMany({ productId: id });
+
+        return res.status(200).json({
+          success: true,
+          message: "Product deleted successfully",
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
         success: false,
         message: error.message,
       });

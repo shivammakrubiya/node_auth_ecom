@@ -1,5 +1,9 @@
 const express = require("express");
-const { addProduct, allProducts } = require("../controller/product,controller");
+const {
+  addProduct,
+  allProducts,
+  deleteProduct,
+} = require("../controller/product.controller");
 const { addUser, login, users } = require("../controller/user.controller");
 const auth = require("../middleware/auth");
 const routes = express.Router();
@@ -17,5 +21,7 @@ routes.get("/user/all", auth, users);
 routes.post("/product/add", auth, addProduct);
 
 routes.get("/product/all", auth, allProducts);
+
+routes.delete("/product/delete", auth, deleteProduct);
 
 module.exports = { routes };
