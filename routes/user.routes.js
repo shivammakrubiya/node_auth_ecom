@@ -1,9 +1,21 @@
 const express = require("express");
-const { addUser, login } = require("../controller/user.controller");
+const { addProduct, allProducts } = require("../controller/product,controller");
+const { addUser, login, users } = require("../controller/user.controller");
+const auth = require("../middleware/auth");
 const routes = express.Router();
 
-routes.post('/add', addUser);
+/* ----------- User Routes  -------------- */
 
-routes.post("/login", login)
+routes.post("/user/add", addUser);
 
-module.exports = {routes}
+routes.post("/user/login", login);
+
+routes.get("/user/all", auth, users);
+
+/* ----------- Product Routes  -------------- */
+
+routes.post("/product/add", auth, addProduct);
+
+routes.get("/product/all", auth, allProducts);
+
+module.exports = { routes };

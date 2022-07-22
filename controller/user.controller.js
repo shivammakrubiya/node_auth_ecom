@@ -56,18 +56,19 @@ module.exports = {
           process.env.SECRET_KEY
         );
         var originalPassword = bytes.toString(cryptojs.enc.Utf8);
-        console.log("=======================>", originalPassword);
         if (originalPassword == password) {
-          // CReate Token
+          // Create Token
 
           const token = jwt.sign(
             { id: findUserData._id, email },
             process.env.JWT_SECRET
           );
 
-          return res
-            .status(200)
-            .send({ success: true, message: "User Login Successfully", token : token }, );
+          return res.status(200).send({
+            success: true,
+            message: "User Login Successfully",
+            token: token,
+          });
         } else {
           return res
             .status(200)
@@ -77,6 +78,17 @@ module.exports = {
     } catch (error) {
       console.log(error);
       res.send({ success: false, error: error });
+    }
+  },
+  users: async (req, res) => {
+    try {
+      const users = await User.find();
+      res.status(200).send({ success: true, data: users });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(400)
+        .send({ success: false, message: "Internal server Error" });
     }
   },
 };
