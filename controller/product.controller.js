@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const Color = require("../models/color");
 const Size = require("../models/size");
 const Product = require("../models/product");
+const imageToBase64 = require("image-to-base64");
 
 module.exports = {
   addProduct: async (req, res) => {
@@ -17,8 +18,7 @@ module.exports = {
         });
       }
 
-      const { title, description, images, size, color, price, quantity } =
-        req.body;
+      const { title, description, size, color, price, quantity } = req.body;
 
       if (!title || !description || !size || !color || !price) {
         return res.status(400).json({
@@ -54,12 +54,28 @@ module.exports = {
           message: "Product added successfully",
         });
       } else {
-        var product = await Product.create({
-          title,
-          description,
-          images,
-          quantity,
-        });
+        var url;
+        if (req.file) {
+          // Coverting Image to Url
+
+          const imageUrl = await imageToBase64(req.file.path);
+
+          url = `data:${req.file.mimetype};base64,${imageUrl}`;
+        } else {
+          return res.status(400).json({
+            success: false,
+            message: "Please upload an image",
+          });
+        }
+
+        let newProductObj = {
+          title: title,
+          description: description,
+          image: url,
+          quantity: quantity,
+        };
+
+        var product = await Product.create(newProductObj);
 
         if (product && product._id) {
           var colorData = await Color.create({
@@ -78,7 +94,7 @@ module.exports = {
           let payload = {
             title: product.title,
             description: product.description,
-            images: product.images,
+            // image: product.image,
             quantity: product.quantity,
             color: colorData.color,
             size: sizeData.size,
@@ -99,10 +115,35 @@ module.exports = {
     try {
       const isUser = req.user;
 
+      const id = req.query.id;
+
       if (!isUser) {
         return res.status(401).json({
           success: false,
           message: "You are not authorized to get All products",
+        });
+      }
+
+      if (id) {
+        const product = await Product.findById({ _id: id });
+        // console.log(product);
+        const color = await Color.find({ productId: product._id });
+        const size = await Size.find({ productId: product._id });
+
+        let payload = {
+          id: product._id,
+          title: product.title,
+          description: product.description,
+          images: product.image,
+          quantity: product.quantity,
+          product: product.images,
+          colors: color,
+          sizes: size,
+        };
+        // console.log(payload);
+        return res.status(200).json({
+          success: true,
+          data: payload,
         });
       }
 
@@ -112,16 +153,8 @@ module.exports = {
       for (let i = 0; i < products.length; i++) {
         const element = products[i];
 
-        console.log(
-          "=====================\n",
-          element._id,
-          "\n====================="
-        );
         const color = await Color.find({ productId: element._id });
         const size = await Size.find({ productId: element._id });
-        console.log(element);
-        console.log("colors", color);
-        console.log("sizes", size);
 
         payload.push({
           id: element._id,
@@ -139,6 +172,7 @@ module.exports = {
         data: payload,
       });
     } catch (error) {
+      // console.log(error);
       res.status(500).json({
         success: false,
         message: error.message,
