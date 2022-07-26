@@ -160,7 +160,7 @@ module.exports = {
           id: element._id,
           title: element.title,
           description: element.description,
-          images: element.images,
+          images: element.image,
           quantity: element.quantity,
           colors: color,
           sizes: size,
