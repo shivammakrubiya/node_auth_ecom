@@ -34,10 +34,34 @@ module.exports = {
         const isSizeExist = await Size.findOne({ size });
 
         if (!isColorExist) {
+          var url;
+          let imageArray = [];
+          if (req.files.length > 0) {
+            // Coverting Image to Url
+
+            for (let i = 0; i < req.files.length; i++) {
+              const element = req.files[i];
+              const imageUrl = await imageToBase64(element.path);
+              url = `data:${element.mimetype};base64,${imageUrl}`;
+              imageArray.push(url);
+            }
+          } else {
+            console.log("default Image");
+            if (isProductExist.image.length > 0) {
+              console.log("Image is exist");
+              imageArray = isProductExist.image;
+            } else {
+              console.log("image is not exist");
+              imageArray = [];
+            }
+            console.log("Hello ", imageArray);
+          }
+
           var newColor = await Color.create({
             productId: isProductExist._id,
             color,
             price,
+            image: imageArray,
           });
         }
 
@@ -55,12 +79,16 @@ module.exports = {
         });
       } else {
         var url;
-        if (req.file) {
+        let imageArray = [];
+        if (req.files.length > 0) {
           // Coverting Image to Url
 
-          const imageUrl = await imageToBase64(req.file.path);
-
-          url = `data:${req.file.mimetype};base64,${imageUrl}`;
+          for (let i = 0; i < req.files.length; i++) {
+            const element = req.files[i];
+            const imageUrl = await imageToBase64(element.path);
+            url = `data:${element.mimetype};base64,${imageUrl}`;
+            imageArray.push(url);
+          }
         } else {
           return res.status(400).json({
             success: false,
@@ -71,7 +99,7 @@ module.exports = {
         let newProductObj = {
           title: title,
           description: description,
-          image: url,
+          image: imageArray,
           quantity: quantity,
         };
 
@@ -82,6 +110,7 @@ module.exports = {
             productId: product._id,
             color,
             price,
+            image: imageArray,
           });
           var sizeData = await Size.create({
             productId: product._id,
@@ -134,7 +163,7 @@ module.exports = {
           id: product._id,
           title: product.title,
           description: product.description,
-          images: product.image,
+          // images: product.image,
           quantity: product.quantity,
           product: product.images,
           colors: color,
@@ -160,7 +189,7 @@ module.exports = {
           id: element._id,
           title: element.title,
           description: element.description,
-          images: element.image,
+          // images: element.image,
           quantity: element.quantity,
           colors: color,
           sizes: size,

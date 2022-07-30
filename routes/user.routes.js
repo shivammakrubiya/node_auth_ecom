@@ -19,7 +19,7 @@ routes.get("/user/all", auth, users);
 
 /* ----------- Product Routes  -------------- */
 
-routes.post("/product/add", auth, upload.single("image"), addProduct);
+routes.post("/product/add", auth, upload.array("image"), addProduct);
 
 routes.get("/product/all", auth, allProducts);
 
