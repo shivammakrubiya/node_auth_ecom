@@ -46,7 +46,32 @@ module.exports = {
               imageArray.push(url);
             }
           } else {
-            console.log("default Image");
+            if (isProductExist.image.length > 0) {
+              imageArray = isProductExist.image;
+            } else {
+              imageArray = [];
+            }
+          }
+
+          var newColor = await Color.create({
+            productId: isProductExist._id,
+            color,
+            price,
+            image: imageArray,
+          });
+        }else{
+          var url;
+          let imageArray = [];
+          if (req.files.length > 0) {
+            // Coverting Image to Url
+
+            for (let i = 0; i < req.files.length; i++) {
+              const element = req.files[i];
+              const imageUrl = await imageToBase64(element.path);
+              url = `data:${element.mimetype};base64,${imageUrl}`;
+              imageArray.push(url);
+            }
+          } else {
             if (isProductExist.image.length > 0) {
               console.log("Image is exist");
               imageArray = isProductExist.image;
@@ -54,7 +79,6 @@ module.exports = {
               console.log("image is not exist");
               imageArray = [];
             }
-            console.log("Hello ", imageArray);
           }
 
           var newColor = await Color.create({
@@ -66,6 +90,12 @@ module.exports = {
         }
 
         if (!isSizeExist) {
+          var newSize = await Size.create({
+            productId: isProductExist._id,
+            size,
+            price,
+          });
+        }else{
           var newSize = await Size.create({
             productId: isProductExist._id,
             size,
